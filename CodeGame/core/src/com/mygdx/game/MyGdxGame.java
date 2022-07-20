@@ -9,37 +9,65 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class MyGdxGame extends ApplicationAdapter {
-   SpriteBatch batch;
-   Texture img;
-   TextureRegion[] animationFrames;
-   Animation<TextureRegion> animation;
-   float elapsedTime;
-   
-   @Override
-   public void create () {
-      batch = new SpriteBatch();
-      img = new Texture("character_pose.png");
 
-      TextureRegion[][] tmpFrames = TextureRegion.split(img,1728,1280);
+	// Constant rows and columns of the sprite sheet
+	private static final int FRAME_COLS = 9, FRAME_ROWS = 5;
 
-      animationFrames = new TextureRegion[45];
-      int index = 0;
+	// Objects used
+	Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
+	Texture walkSheet;
+	SpriteBatch spriteBatch;
 
-      for (int i = 0; i < 5; i++){
-         for(int j = 0; j < 9; j++) {
-            animationFrames[index++] = tmpFrames[j][i];
-         }
-      }
+	// A variable for tracking elapsed time for the animation
+	float stateTime;
 
-      animation = new Animation<TextureRegion>(1f/15f,animationFrames);
-   }
+	@Override
+	public void create() {
 
-   @Override
-   public void render () {
-      elapsedTime += Gdx.graphics.getDeltaTime();
-      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-      batch.begin();
-      batch.draw(animation.getKeyFrame(elapsedTime,true),0,0);
-      batch.end();
-   }
+		// Load the sprite sheet as a Texture
+		walkSheet = new Texture(Gdx.files.internal("character_pose.png"));
+
+		// Use the split utility method to create a 2D array of TextureRegions. This is
+		// possible because this sprite sheet contains frames of equal size and they are
+		// all aligned.
+		TextureRegion[][] tmp = TextureRegion.split(walkSheet,
+				walkSheet.getWidth() / FRAME_COLS,
+				walkSheet.getHeight() / FRAME_ROWS);
+
+		// Place the regions into a 1D array in the correct order, starting from the top
+		// left, going across first. The Animation constructor requires a 1D array.
+		TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		int index = 0;
+		for (int i = 0; i < FRAME_ROWS; i++) {
+			for (int j = 0; j < FRAME_COLS; j++) {
+				walkFrames[index++] = tmp[i][j];
+			}
+		}
+
+		// Initialize the Animation with the frame interval and array of frames
+		walkAnimation = new Animation<TextureRegion>(1f/4f, walkFrames);
+
+		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
+		// time to 0
+		spriteBatch = new SpriteBatch();
+		stateTime = 0f;
+	}
+
+	@Override
+	public void render() {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+
+		// Get current frame of animation for the current stateTime
+		TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+		spriteBatch.begin();
+		spriteBatch.draw(currentFrame, 50, 50); // Draw current frame at (50, 50)
+		spriteBatch.end();
+	}
+
+	@Override
+	public void dispose() { // SpriteBatches and Textures must always be disposed
+		spriteBatch.dispose();
+		walkSheet.dispose();
+	}
 }
