@@ -36,16 +36,14 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Place the regions into a 1D array in the correct order, starting from the top
 		// left, going across first. The Animation constructor requires a 1D array.
-		TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		TextureRegion[] walkFrames = new TextureRegion[3];
 		int index = 0;
-		for (int i = 0; i < FRAME_ROWS; i++) {
-			for (int j = 0; j < FRAME_COLS; j++) {
-				walkFrames[index++] = tmp[i][j];
-			}
-		}
+		walkFrames[index++] = tmp[2][6];
+		walkFrames[index++] = tmp[2][7];
+		walkFrames[index++] = tmp[2][8];
 
 		// Initialize the Animation with the frame interval and array of frames
-		walkAnimation = new Animation<TextureRegion>(1f/4f, walkFrames);
+		walkAnimation = new Animation<TextureRegion>(1f/6f, walkFrames);
 
 		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
 		// time to 0
