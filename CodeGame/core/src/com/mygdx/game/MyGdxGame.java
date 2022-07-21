@@ -18,8 +18,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	private static final int FRAME_COLS = 8, FRAME_ROWS = 1;
 
 	// Objects used
-	Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
-	Texture walkSheet;
+	Animation<TextureRegion> frontAnimation; // Must declare frame type (TextureRegion)
+	Texture frontSheet;
 	SpriteBatch spriteBatch;
 	OrthographicCamera camera;
 	private Rectangle person;
@@ -31,7 +31,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void create() {
 
 		// Load the sprite sheet as a Texture
-		walkSheet = new Texture(Gdx.files.internal("front.png"));
+		frontSheet = new Texture(Gdx.files.internal("front.png"));
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
@@ -39,27 +39,26 @@ public class MyGdxGame extends ApplicationAdapter {
 		// Use the split utility method to create a 2D array of TextureRegions. This is
 		// possible because this sprite sheet contains frames of equal size and they are
 		// all aligned.
-		TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-				walkSheet.getWidth() / FRAME_COLS,
-				walkSheet.getHeight() / FRAME_ROWS);
+		TextureRegion[][] tmp = TextureRegion.split(frontSheet,
+				frontSheet.getWidth() / FRAME_COLS,
+				frontSheet.getHeight() / FRAME_ROWS);
 
 		// Place the regions into a 1D array in the correct order, starting from the top
 		// left, going across first. The Animation constructor requires a 1D array.
-		TextureRegion[] walkFrames = new TextureRegion[8];
+		TextureRegion[] frontFrames = new TextureRegion[8];
 		int index = 0;
 
-		walkFrames[index++] = tmp[0][0];
-		walkFrames[index++] = tmp[0][0];
-		walkFrames[index++] = tmp[0][2];
-		walkFrames[index++] = tmp[0][3];
-		walkFrames[index++] = tmp[0][4];
-		walkFrames[index++] = tmp[0][5];
-		walkFrames[index++] = tmp[0][6];
-		walkFrames[index++] = tmp[0][7];
-
+		frontFrames[index++] = tmp[0][1];
+		frontFrames[index++] = tmp[0][2];
+		frontFrames[index++] = tmp[0][3];
+		frontFrames[index++] = tmp[0][4];
+		frontFrames[index++] = tmp[0][5];
+		frontFrames[index++] = tmp[0][6];
+		frontFrames[index++] = tmp[0][7];
+		frontFrames[index++] = tmp[0][2];
 
 		// Initialize the Animation with the frame interval and array of frames
-		walkAnimation = new Animation<TextureRegion>(1f/10f, walkFrames);
+		frontAnimation = new Animation<TextureRegion>(1f/10f, frontFrames);
 		person = new Rectangle();
 		person.x = 200 / 2 - 64 / 2; // center the person horizontally
 		person.y = 60; // bottom left corner of the person is 20 pixels above the bottom screen edge
@@ -78,7 +77,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 
 		// Get current frame of animation for the current stateTime
-		TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+		TextureRegion currentFrame = frontAnimation.getKeyFrame(stateTime, true);
 		spriteBatch.begin();
 		spriteBatch.draw(currentFrame, person.x, person.y); // Draw current frame at (50, 50)
 		spriteBatch.end();
@@ -92,6 +91,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose() { // SpriteBatches and Textures must always be disposed
 		spriteBatch.dispose();
-		walkSheet.dispose();
+		frontSheet.dispose();
 	}
 }
