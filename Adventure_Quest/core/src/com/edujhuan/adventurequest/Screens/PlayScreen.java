@@ -1,6 +1,5 @@
 package com.edujhuan.adventurequest.Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -20,32 +19,29 @@ import com.edujhuan.adventurequest.Scenes.Hud;
 import com.edujhuan.adventurequest.Sprites.Player;
 import com.edujhuan.adventurequest.Tools.B2WorldCreator;
 
-public class PlayScreen implements Screen{ // we send the game it self to the screen
-
-    // set Screens variables
+public class PlayScreen implements Screen{ //we send the game it self to the screen
+    
+	// set Screens variables
     private AdventureQuest game;
     private TextureAtlas atlas;
-
-    // playscreen variables
+    //playscreen variables
     private OrthographicCamera cam;
     private Viewport gamePort;
     private Hud hud;
-
-    // map variables
+    //map variables
     private TmxMapLoader mapLoader;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
-
-    // Box2d variables
+    //Box2d variables
     private World world;
     private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
 
-    // sprites
+    //sprites
     private Player player;
 
     public PlayScreen(AdventureQuest game){
-        atlas = new TextureAtlas("character_poses.pack");
+		atlas = new TextureAtlas("poswrrior.pack");
         this.game = game;
 
         // cam to follow the player through the game stage
@@ -89,13 +85,18 @@ public class PlayScreen implements Screen{ // we send the game it self to the sc
     }
 
     public void handleInput(float delta){
-        // the control of the player using game buttons and impulse 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
-            player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
+		// the control of the player using game buttons and impulse 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            player.b2body.applyLinearImpulse(new Vector2(0, 3.5f), player.b2body.getWorldCenter(), true);
+        if((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) && player.b2body.getLinearVelocity().x <= 1.3)
             player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x <= -2)
+        if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && player.b2body.getLinearVelocity().x >= -1.3)
             player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+			player.b2body.setBullet(true);
+		
+
+
     }
 
     public void update(float delta){
@@ -109,7 +110,7 @@ public class PlayScreen implements Screen{ // we send the game it self to the sc
 
     @Override
     public void render(float delta) {
-        update(delta); // separate our update logic from render (não entendi direito isso)
+		update(delta); // separate our update logic from render (não entendi direito isso)
 
         Gdx.gl.glClearColor(0, 0, 0, 1); 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -122,7 +123,7 @@ public class PlayScreen implements Screen{ // we send the game it self to the sc
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined); // set and makes the batch draw what the hud sees
-        hud.stage.draw();                                               
+        hud.stage.draw();                        
     }
 
     @Override
@@ -147,7 +148,7 @@ public class PlayScreen implements Screen{ // we send the game it self to the sc
 
     @Override
     public void dispose() {
-        // dispose all opened resources
+		// dispose all opened resources
         map.dispose();
         renderer.dispose();
         world.dispose();
